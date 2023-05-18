@@ -1,5 +1,11 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
+  signOut,
+} from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -13,4 +19,31 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebase = initializeApp(firebaseConfig);
-export const authService = getAuth();
+export const auth = getAuth();
+
+//구글로 로그인
+export const LoginWithGoogle = () => {
+  const provider = new GoogleAuthProvider();
+  return signInWithPopup(auth, provider)
+    .then((result) => {
+      const user = result.user;
+      return user;
+    })
+    .catch(console.error);
+};
+
+//깃허브로 로그인
+export const LoginWithGithub = () => {
+  const provider = new GithubAuthProvider();
+  return signInWithPopup(auth, provider)
+    .then((result) => {
+      const user = result.user;
+      return user;
+    })
+    .catch(console.error);
+};
+
+// 로그아웃
+export const logout = () => {
+  return signOut(auth).catch(console.error);
+};
