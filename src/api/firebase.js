@@ -1,11 +1,14 @@
 import { initializeApp } from 'firebase/app';
 import {
   getAuth,
+  createUserWithEmailAndPassword,
   GoogleAuthProvider,
   GithubAuthProvider,
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
+
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -18,32 +21,49 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebase = initializeApp(firebaseConfig);
-export const auth = getAuth();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+export const db = getFirestore(app);
 
-//구글로 로그인
-export const LoginWithGoogle = () => {
-  const provider = new GoogleAuthProvider();
-  return signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      return user;
+//join with Eamil & password
+export const joinWithEmailAndPassword = async (email, password) => {
+  return createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      return userCredential.user;
     })
     .catch(console.error);
 };
 
-//깃허브로 로그인
-export const LoginWithGithub = () => {
-  const provider = new GithubAuthProvider();
-  return signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      return user;
-    })
-    .catch(console.error);
+//Login with social
+export const loginWithSocial = async (social) => {
+  let provider;
+  if (social === 'google') {
+    provider = new GoogleAuthProvider();
+  } else if (social === 'github') {
+    provider = new GithubAuthProvider();
+  }
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-// 로그아웃
-export const logout = () => {
-  return signOut(auth).catch(console.error);
+//Logout
+export const logout = async () => {
+  signOut(auth).catch(console.error);
 };
+
+//로그인 유지
+export const stateAuth = (setUser) => {
+  return auth.onAuthStateChanged(function (user) {
+    if (user) {
+      setUser(user);
+    } else {
+      console.log('no data');
+    }
+  });
+};
+

@@ -1,13 +1,12 @@
-import React from 'react';
 import styles from './Nav.module.css';
-import { Link, useNavigate, useNavigation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useAuthContext } from '../../context/AuthContext';
 import { logout } from '../../api/firebase';
 
-export default function Nav({ setLogin }) {
-  const navigate = useNavigate();
+export default function Nav() {
+  const { setUser } = useAuthContext();
   const handleLogout = async () => {
-    logout().then(setLogin);
-    navigate('/');
+    logout().then(setUser);
   };
   return (
     <nav>

@@ -6,6 +6,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import { AuthContextProvider } from './context/AuthContext';
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,9 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
+  <AuthContextProvider>
     <RouterProvider router={router} />
-  </React.StrictMode>
+  </AuthContextProvider>
+  // </React.StrictMode>
 );

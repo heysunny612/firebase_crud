@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
-import Home from './pages/Home';
 import Login from './pages/Login';
-import { auth } from './api/firebase';
 import { Outlet } from 'react-router-dom';
 import Nav from './components/Nav/Nav';
+import { useAuthContext } from './context/AuthContext';
+import { useEffect } from 'react';
+import { stateAuth } from './api/firebase';
+import Footer from './components/Footer/Footer';
 
 export default function App() {
-  const [isLogin, setLogin] = useState(auth.currentUser);
-  console.log(isLogin);
+  const { user, setUser } = useAuthContext();
+  useEffect(() => stateAuth(setUser), [setUser]);
   return (
     <>
-      {isLogin && (
+      {user && (
         <div>
-          <Nav setLogin={setLogin}  />
+          <Nav />
           <Outlet />
+          <Footer />
         </div>
       )}
-      {!isLogin && <Login setLogin={setLogin} />}
+      {!user && <Login />}
     </>
   );
 }

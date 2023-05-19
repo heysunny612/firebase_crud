@@ -1,37 +1,51 @@
-import React, { useState } from 'react';
-import { LoginWithGoogle, LoginWithGithub } from '../api/firebase';
+import { useState } from 'react';
+import { loginWithSocial, joinWithEmailAndPassword } from '../api/firebase.js';
+import { useAuthContext } from '../context/AuthContext.jsx';
 
-export default function Login({ setLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [newAccount, setNewAccount] = useState(true);
-
+export default function Login() {
+  const { setUser } = useAuthContext();
+  const [form, setForm] = useState({ email: '', password: '' });
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'email') {
-      setEmail(value);
-    } else if (name === 'password') {
-      setPassword(value);
-    }
+    setForm({ ...form, [name]: value });
   };
-  const handleSubmit = async (e) => {};
-
-  const handleSocialClick = async (event) => {
-    const { name } = event.target;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    joinWithEmailAndPassword(form.email, form.password).then(setUser);
+  };
+  const handleClick = async (e) => {
+    const name = e.target.name;
     let user;
     if (name === 'google') {
-      user = await LoginWithGoogle();
+      user = await loginWithSocial(name);
     } else if (name === 'github') {
-      user = await LoginWithGithub();
+      user = await loginWithSocial(name);
     }
-    setLogin(user);
+    setUser(user);
   };
   return (
     <div>
-      <button name='google' onClick={handleSocialClick}>
+      <form onSubmit={handleSubmit}>
+        <input
+          type='email'
+          name='email'
+          placeholder='Eamil'
+          value={form.email}
+          onChange={handleChange}
+        />
+        <input
+          type='password'
+          name='password'
+          placeholder='Password'
+          value={form.password}
+          onChange={handleChange}
+        />
+        <button>Create Accout</button>
+      </form>
+      <button name='google' onClick={handleClick}>
         Continue width Google
       </button>
-      <button name='github' onClick={handleSocialClick}>
+      <button name='github' onClick={handleClick}>
         Continue width Github
       </button>
     </div>
