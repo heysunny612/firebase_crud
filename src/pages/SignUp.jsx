@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GrClose } from 'react-icons/gr';
+import { createUser, login } from '../api/firebase';
 
 export default function SignUp() {
   const {
@@ -22,6 +23,9 @@ export default function SignUp() {
         { shouldFocus: true }
       );
     }
+    isLogin
+      ? login(data.email, data.pw1).then(() => navigate('/'))
+      : createUser(data.email, data.pw1).then(() => navigate('/'));
   };
   const { email, pw1, pw2 } = watch();
   return (
@@ -31,7 +35,7 @@ export default function SignUp() {
         <form className='form' onSubmit={handleSubmit(onVaild)}>
           <div className={`form-item ${errors.email ? 'error' : ''}`}>
             <input
-              type='text'
+              type='email'
               id='email'
               autoComplete='off'
               {...register('email', { required: '이메일을 입력해주세요' })}
