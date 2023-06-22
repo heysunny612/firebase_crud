@@ -9,6 +9,7 @@ import {
   signInWithPopup,
   GithubAuthProvider,
 } from 'firebase/auth';
+import { addDoc, collection, getDocs, getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -22,6 +23,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 // 중복코드 함수처리
 const handleAuth = async (
@@ -75,4 +77,15 @@ export const getAuthState = (setUser, setIsGettingUser) => {
     user ? setUser(user) : setUser(null);
     setIsGettingUser(true);
   });
+};
+
+//CREATE
+export const createSweet = async (data) => {
+  return await addDoc(collection(db, 'sweet'), data);
+};
+
+//READ
+export const readSweet = async () => {
+  const querySnapshot = await getDocs(collection(db, 'sweet'));
+  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };

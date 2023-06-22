@@ -1,0 +1,33 @@
+.sweet__list {
+  li {
+    display: flex;
+    align-items: flex-start;
+    padding: 20px;
+    border-bottom: 1px solid #eff3f4;
+
+    .sweet_img {
+      margin-right: 20px;
+      width: 50px;
+
+      img {
+        border-radius: 50px;
+      }
+    }
+    .sweet_content {
+      flex: 1 1 auto;
+      .sweet_info {
+        font-weight: bold;
+        span {
+          color: rgb(83, 100, 113);
+          font-weight: normal;
+        }
+      }
+      .sweet_text {
+        margin: 20px 0;
+      }
+    }
+  }
+  &:hover {
+    background-color: #f7f7f7;
+  }
+}

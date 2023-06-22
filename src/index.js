@@ -3,12 +3,16 @@ import React from 'react';
 import './styles/index.scss';
 import Routes from './Routes';
 import UserContextProvider from './context/UserContext';
+import { QueryClient, QueryClientProvider } from 'react-query';
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <UserContextProvider>
-      <Routes />
+      <QueryClientProvider client={queryClient}>
+        <Routes />
+      </QueryClientProvider>
     </UserContextProvider>
   </React.StrictMode>
 );
