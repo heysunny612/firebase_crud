@@ -1,9 +1,41 @@
 .main__container {
   max-width: 920px;
+  min-width: 920px;
   width: 100%;
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
   gap: 20px;
   height: 1500px;
+}
+
+.side__container {
+  width: 300px;
+  flex-basis: auto;
+  flex-shrink: 0;
+
+  h1 {
+    margin: 10px;
+    font-size: 35px;
+    color: #1d9bf0;
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 55px;
+      height: 55px;
+      border-radius: 50px;
+      &:hover {
+        background-color: #d6d6d6;
+      }
+    }
+  }
+}
+
+.content__container {
+  padding: 40px 20px;
+  flex: 1 1 auto;
+  flex-basis: auto;
+  flex-shrink: 0;
+  border: 1px solid #eff3f4;
 }

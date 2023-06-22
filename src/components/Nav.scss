@@ -1,0 +1,30 @@
+.side_nav {
+  position: sticky;
+  top: 12px;
+  left: 0;
+
+  ul {
+    li {
+      display: flex;
+      margin-top: 5px;
+      font-size: 20px;
+      cursor: pointer;
+
+      span {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        border-radius: 20px;
+        transition: all 200ms ease;
+
+        &:hover {
+          background-color: #d6d6d6;
+        }
+        svg {
+          font-size: 28px;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}

@@ -23,7 +23,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-
 // 중복코드 함수처리
 const handleAuth = async (
   authFn,
@@ -48,7 +47,6 @@ export const login = async (params) => {
 };
 
 //소셜 로그인
-
 export const loginWithSocial = async (social) => {
   const provider =
     social === 'google'
@@ -56,6 +54,11 @@ export const loginWithSocial = async (social) => {
       : social === 'github'
       ? new GithubAuthProvider()
       : '';
+
+  provider.setCustomParameters({
+    prompt: 'select_account',
+  });
+
   return signInWithPopup(auth, provider).catch((error) => {
     console.log(error);
   });
@@ -67,7 +70,7 @@ export const logout = () => {
 };
 
 //로그인한 상태가 변경될때 마다 가져오기
-export const getAuthState = (setUser, setIsGettingUser, isGettingUser) => {
+export const getAuthState = (setUser, setIsGettingUser) => {
   return onAuthStateChanged(auth, (user) => {
     user ? setUser(user) : setUser(null);
     setIsGettingUser(true);
