@@ -5,6 +5,9 @@ import {
   onAuthStateChanged,
   signOut,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  GithubAuthProvider,
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -20,20 +23,42 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// 이메일로 계정만들기
-export const createUser = async (email, password) => {
-  return createUserWithEmailAndPassword(auth, email, password) //
+
+// 중복코드 함수처리
+const handleAuth = async (
+  authFn,
+  { email, password, navigate, setLoginError }
+) => {
+  authFn(auth, email, password)
+    .then(() => navigate('/'))
     .catch((error) => {
-      console.log(error);
+      console.log(error.code);
+      setLoginError(error.message);
     });
 };
 
+// 이메일로 계정만들기
+export const createUser = async (params) => {
+  await handleAuth(createUserWithEmailAndPassword, params);
+};
+
 //기존 사용자 로그인
-export const login = async (email, password) => {
-  return signInWithEmailAndPassword(auth, email, password) //
-    .catch((error) => {
-      console.log(error);
-    });
+export const login = async (params) => {
+  await handleAuth(signInWithEmailAndPassword, params);
+};
+
+//소셜 로그인
+
+export const loginWithSocial = async (social) => {
+  const provider =
+    social === 'google'
+      ? new GoogleAuthProvider()
+      : social === 'github'
+      ? new GithubAuthProvider()
+      : '';
+  return signInWithPopup(auth, provider).catch((error) => {
+    console.log(error);
+  });
 };
 
 //로그아웃
@@ -42,14 +67,9 @@ export const logout = () => {
 };
 
 //로그인한 상태가 변경될때 마다 가져오기
-export const getAuthState = (setUser, setIsGettingUser) => {
+export const getAuthState = (setUser, setIsGettingUser, isGettingUser) => {
   return onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setUser(user);
-      setIsGettingUser(true);
-    } else {
-      setUser(null);
-      setIsGettingUser(false);
-    }
+    user ? setUser(user) : setUser(null);
+    setIsGettingUser(true);
   });
 };

@@ -6,12 +6,12 @@ import { useUserContext } from '../context/UserContext';
 export default function Home() {
   const { pathname } = useLocation();
   const isSignUpPage = pathname === '/signup';
-  const { user } = useUserContext();
+  const { isGettingUser } = useUserContext();
 
   return (
     <main className='main__container'>
       <section className='content__container'>1</section>
-      <Auth user={user} />
+      <Auth />
       {isSignUpPage ? <SignUp /> : null}
     </main>
   );
