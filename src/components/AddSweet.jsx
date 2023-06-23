@@ -40,7 +40,6 @@ export default function AddSweet() {
     reset();
     setImgURL(null)
   };
-  console.log(user);
   return (
     <>
     {user && 

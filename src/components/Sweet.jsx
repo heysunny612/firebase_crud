@@ -1,5 +1,5 @@
 import React, {  useState } from 'react';
-import { deleteSweet,  updateSweet } from '../api/firebase';
+import { deleteFile, deleteSweet,  updateSweet } from '../api/firebase';
 import { useUserContext } from '../context/UserContext'
 import { useMutation, useQueryClient } from 'react-query'
 
@@ -9,14 +9,28 @@ export default function Sweet({ sweet, sweet: { id, text,imgURL, createdAt, user
   const { user } = useUserContext()
   const [editText, setEditText] = useState(text);
   const [editMode, setEditMode] = useState(false); 
-  const updateSweets = useMutation(() => updateSweet(sweet, editText), {
+
+  const updateSweets = useMutation(() => updateSweet(sweet, editText,'text'), {
     onSuccess: () => queryClient.invalidateQueries(['sweets'])
   })
-  const deleteSweets = useMutation(() => deleteSweet(id), {
-    onSuccess: () => queryClient.invalidateQueries(['sweets']),
+  const deleteSweets = useMutation(() => {
+    return deleteSweet(id).then(() => {
+      if (imgURL) { return deleteFile(imgURL) }
+    });
+  }, {onSuccess: () => queryClient.invalidateQueries(['sweets'])});
+  const deleteSweetFile = useMutation(() => updateSweet(sweet, imgURL,'img'), {
+    onSuccess: () => queryClient.invalidateQueries(['sweets'])      
   })
-  const handleDelete =  () => {  
-      deleteSweets.mutate();
+
+  const handleDelete = () => {  
+    const isDelete = window.confirm('스윗을 정말 삭제하시겠습니까?')
+    if(!isDelete) return 
+    deleteSweets.mutate();
+  }
+  const handleDeleteFile = async () => {
+    const isDelete = window.confirm('이미지를 정말 삭제하시겠습니까?')
+    if(!isDelete) return 
+    deleteSweetFile.mutate();
   }
   const toggleEdit = () => setEditMode((prev) => !prev)  
   const handleUpdate = async (e) => {
@@ -26,7 +40,7 @@ export default function Sweet({ sweet, sweet: { id, text,imgURL, createdAt, user
   };
 return (
     <li>
-      <div className='sweet_img'>
+      <div className='sweet_icon'>
         <img src={creater?.url} alt='' width='100%' />
       </div>
       <div className='sweet_content'>
@@ -49,8 +63,11 @@ return (
             <textarea type='text' value={editText} onChange={(e) => setEditText(e.target.value)} />
             <button>Edit</button>
           </form>
-          )}        
-        {imgURL && <img src={imgURL} alt={text} />}            
+          )}
+          <div className='sweet_image'>
+          {imgURL &&  <img src={imgURL} alt={text} />}
+          {imgURL && editMode && <button onClick={handleDeleteFile}>이미지삭제</button>}          
+          </div>
         </div>       
       </div>
     </li>

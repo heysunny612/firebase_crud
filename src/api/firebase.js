@@ -11,7 +11,7 @@ import {
 
 } from 'firebase/auth';
 import { addDoc, collection, getDocs, getFirestore,  doc,  deleteDoc ,  updateDoc } from 'firebase/firestore';
-import { getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadString ,deleteObject} from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -93,10 +93,9 @@ const createFileURL = async (uid,url) => {
 export const createSweet = async (data) => {
   const sweetData = { ...data };
   if (data.imgURL) {
-    const fileURL = await createFileURL(data.user.id, data.imgURL) 
-    sweetData.imgURL = fileURL;
-  } 
-  return await addDoc(collection(db, 'sweet'), data);  
+    sweetData.imgURL = await createFileURL(data.user.id, data.imgURL);
+  }
+  return await addDoc(collection(db, 'sweet'), sweetData);
 };
 
 //READ
@@ -106,14 +105,27 @@ export const readSweet = async () => {
 };
 
 //UPDATE
-export const updateSweet = async (sweet, text) => {
-  await updateDoc(doc(db, "sweet", sweet.id), { text });
+export const updateSweet = async (sweet, changeData, type) => {
+  if (type === 'text') {
+     await updateDoc(doc(db, "sweet", sweet.id), { text:changeData });
+  } else if (type === 'img') {
+    return deleteFile(changeData).then(()=>updateDoc(doc(db, "sweet", sweet.id), { imgURL:null }))
+  }
+ 
 }
 
 //DELETE
 export const deleteSweet = async (id) => {
   return await deleteDoc(doc(db, "sweet", id))
 }
+
+// DELETE the file
+export const deleteFile = async (imgURL) => {
+  const urlRef = ref(storage,imgURL );
+  return await deleteObject(urlRef)
+}
+
+
 
 
 
