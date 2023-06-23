@@ -20,11 +20,6 @@ export default function Nav() {
             <BsPersonCircle /> MY PROFILE
           </span>
         </li>
-        <li onClick={() => navigate('/sweet')} role='button'>
-          <span>
-            <BsPersonCircle /> SWEET
-          </span>
-        </li>
         <li onClick={logout} role='button'>
           <span>
             <AiOutlineLogout /> LOGOUT

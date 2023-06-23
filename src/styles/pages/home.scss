@@ -7,14 +7,18 @@
 
     .sweet_img {
       margin-right: 20px;
-      width: 50px;
+      
 
       img {
+        width: 50px;
+        height:50px;
         border-radius: 50px;
       }
     }
     .sweet_content {
+      position: relative;
       flex: 1 1 auto;
+ 
       .sweet_info {
         font-weight: bold;
         span {
@@ -22,12 +26,44 @@
           font-weight: normal;
         }
       }
+      .sweet_menu {
+        position: absolute;
+        top:-10px;
+        right:0;
+        button {margin-left:5px; font-size:11px; padding:5px 10px; background-color: #fff; color:#1d9bf0;border-radius: 5px;}
+        button:hover {background-color:#1d9bf0; color:#fff; }
+      }
       .sweet_text {
         margin: 20px 0;
+        p {margin-bottom:20px; line-height: 1.5;}
+        img{
+          width:100%;
+          max-height:500px;
+          object-fit: cover;
+          border-radius: 20px;
+        } 
+        
+        form {
+          width:100%;
+          text-align: right;
+          textarea {
+            width:100%;
+            padding:10px;
+            font-size:16px;
+            font-family: '맑은 고딕',sans-serif;
+          }
+          button {
+            margin:15px 0;
+            padding:7px 15px; background-color:#1d9bf0; font-size:14px; font-weight: bold; color:#fff; border-radius: 10px;
+          }
+        }
       }
+    } 
+    &:hover {
+      background-color: #f7f7f7;
     }
   }
-  &:hover {
-    background-color: #f7f7f7;
-  }
+
 }
+
+

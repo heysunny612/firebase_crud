@@ -8,8 +8,10 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   GithubAuthProvider,
+
 } from 'firebase/auth';
-import { addDoc, collection, getDocs, getFirestore } from 'firebase/firestore';
+import { addDoc, collection, getDocs, getFirestore,  doc,  deleteDoc ,  updateDoc } from 'firebase/firestore';
+import { getDownloadURL, getStorage, ref, uploadString } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -24,6 +26,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
+;
 
 // 중복코드 함수처리
 const handleAuth = async (
@@ -78,10 +82,21 @@ export const getAuthState = (setUser, setIsGettingUser) => {
     setIsGettingUser(true);
   });
 };
+//IMAGE UPLOAD TO STORAGE
+const createFileURL = async (uid,url) => {
+  const fileRef = ref(storage, `${uid}/${Date.now()}`);
+  const response = await uploadString(fileRef, url, "data_url");
+  return await getDownloadURL(response.ref)
+}
 
 //CREATE
 export const createSweet = async (data) => {
-  return await addDoc(collection(db, 'sweet'), data);
+  const sweetData = { ...data };
+  if (data.imgURL) {
+    const fileURL = await createFileURL(data.user.id, data.imgURL) 
+    sweetData.imgURL = fileURL;
+  } 
+  return await addDoc(collection(db, 'sweet'), data);  
 };
 
 //READ
@@ -89,3 +104,16 @@ export const readSweet = async () => {
   const querySnapshot = await getDocs(collection(db, 'sweet'));
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 };
+
+//UPDATE
+export const updateSweet = async (sweet, text) => {
+  await updateDoc(doc(db, "sweet", sweet.id), { text });
+}
+
+//DELETE
+export const deleteSweet = async (id) => {
+  return await deleteDoc(doc(db, "sweet", id))
+}
+
+
+
