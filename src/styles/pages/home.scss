@@ -3,7 +3,7 @@
     display: flex;
     align-items: flex-start;
     padding: 20px;
-    border-bottom: 1px solid #eff3f4;
+    border-top: 1px solid #eff3f4;
 
     .sweet_icon {
       margin-right: 20px;
@@ -79,3 +79,5 @@
 }
 
 
+
+.isLoading {padding:20px; background-color:#1d9bf0; color:#fff;}

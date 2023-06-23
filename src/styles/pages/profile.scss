@@ -1,0 +1,29 @@
+.edit_profile {
+  padding:20px;
+  border-top:1px solid #eff3f4;
+
+  form {
+    p {
+      margin-bottom:15px;
+      font-size:18px;
+      span {
+        font-size:24px;
+        font-weight: bold;
+      }
+     }
+     input {
+      border:1px solid #eff3f4;
+      padding:10px 15px;
+      outline-color:#1d9bf0;
+      font-size: 16px;
+     }
+     div{
+      display: flex;
+      button {
+        background-color:#1d9bf0 ;
+        color:#fff;
+        font-size: 16px;
+      }
+     }
+  }
+}

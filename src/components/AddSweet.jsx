@@ -12,19 +12,22 @@ export default function AddSweet() {
   const { user } = useUserContext();
   const { register, handleSubmit, reset } = useForm();
   const [imgURL, setImgURL] = useState(null)
+  const [isAdding,setIsAdding]=useState(false)
   const addSweet = useMutation((data) => createSweet(data), {
-    onSuccess: () => queryClient.invalidateQueries(['sweets'])
+    onMutate: ()=> { setIsAdding(true) },
+    onSuccess: () => {
+      setIsAdding(false)
+      queryClient.invalidateQueries(['sweets'])
+    } 
   })
   const handleFile = (event) => {
     const { files } = event.target
     const reader = new FileReader();
-    //데이터읽기
     reader.readAsDataURL(files[0]) 
-    //데이터 읽기가 끝나면 실행되는 함수
     reader.onloadend = (finishedEvent) => { setImgURL(finishedEvent.target.result) }    
   }
   const handleClearFile = ()=> setImgURL(null)
-  const handleCreateSweet = (data) => {
+  const handleCreateSweet =async (data) => {
     const dataObj = {
       user: {
         id: user.uid,
@@ -35,8 +38,8 @@ export default function AddSweet() {
       text: data.text,
       imgURL,
       createdAt: Date.now(),
-    };
-    addSweet.mutate(dataObj)
+    };  
+    addSweet.mutate(dataObj) 
     reset();
     setImgURL(null)
   };
@@ -44,7 +47,7 @@ export default function AddSweet() {
     <>
     {user && 
         <div className='add__sweet'>
-          <div className='user_icon'><img src={user.photoURL} alt={user.displayName}/></div>
+          <div className='user_icon'>   {user?.photoURL ? <img src={user?.photoURL} alt={user?.name || user?.email} width='100%' /> : <span className='no_icon'>{user?.name?.charAt(0) && user?.email?.charAt(0)}</span>}</div>
           <form onSubmit={handleSubmit(handleCreateSweet)}>
             <textarea
               type='text'
@@ -63,8 +66,10 @@ export default function AddSweet() {
               <div className="add__btn"><button>Sweet</button></div>             
             </div>          
           </form>
+                  
       </div>
       }
+      {isAdding ? <p className='isLoading'>Sweet 업로드중...</p> : null} 
     </>
   );
 }

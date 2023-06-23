@@ -2,6 +2,7 @@ import React, {  useState } from 'react';
 import { deleteFile, deleteSweet,  updateSweet } from '../api/firebase';
 import { useUserContext } from '../context/UserContext'
 import { useMutation, useQueryClient } from 'react-query'
+import { formatAgo } from '../utils/timeago';
 
 
 export default function Sweet({ sweet, sweet: { id, text,imgURL, createdAt, user: creater } }) {
@@ -40,14 +41,14 @@ export default function Sweet({ sweet, sweet: { id, text,imgURL, createdAt, user
   };
 return (
     <li>
-      <div className='sweet_icon'>
-        <img src={creater?.url} alt='' width='100%' />
+    <div className='sweet_icon'>      
+      {creater.url ? <img src={creater.url} alt={creater?.name || creater?.email} width='100%' /> : <span className='no_icon'>{creater?.name?.charAt(0) || creater?.email?.charAt(0)}</span>}
       </div>
       <div className='sweet_content'>
         <div className='sweet_info'>
           {creater?.name}
           <span>
-            {creater?.email} {createdAt}
+            {creater?.email} {formatAgo(createdAt,'ko')}
           </span>
       </div>
       {user && user.uid === creater.id && (

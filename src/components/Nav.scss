@@ -17,8 +17,8 @@
         border-radius: 20px;
         transition: all 200ms ease;
 
-        &:hover {
-          background-color: #d6d6d6;
+        &:hover,&.active {
+          background-color: #eff3f4;
         }
         svg {
           font-size: 28px;

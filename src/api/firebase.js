@@ -8,9 +8,10 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   GithubAuthProvider,
+  updateProfile,
 
 } from 'firebase/auth';
-import { addDoc, collection, getDocs, getFirestore,  doc,  deleteDoc ,  updateDoc } from 'firebase/firestore';
+import { addDoc, collection, getDocs, getFirestore,  doc,  deleteDoc ,  updateDoc, query } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadString ,deleteObject} from "firebase/storage";
 
 const firebaseConfig = {
@@ -24,7 +25,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 ;
@@ -54,12 +55,13 @@ export const login = async (params) => {
 
 //소셜 로그인
 export const loginWithSocial = async (social) => {
-  const provider =
-    social === 'google'
-      ? new GoogleAuthProvider()
-      : social === 'github'
-      ? new GithubAuthProvider()
-      : '';
+  let provider = null;
+  if (social === 'google') {
+    provider = new GoogleAuthProvider();
+  } else if (social === 'github') {
+    provider = new GithubAuthProvider();
+  } else {
+    throw new Error('Unsupported social provider');  } 
 
   provider.setCustomParameters({
     prompt: 'select_account',
@@ -82,11 +84,17 @@ export const getAuthState = (setUser, setIsGettingUser) => {
     setIsGettingUser(true);
   });
 };
+
 //IMAGE UPLOAD TO STORAGE
-const createFileURL = async (uid,url) => {
-  const fileRef = ref(storage, `${uid}/${Date.now()}`);
-  const response = await uploadString(fileRef, url, "data_url");
-  return await getDownloadURL(response.ref)
+const createFileURL = async (uid, url) => {
+  try {
+    const fileRef = ref(storage, `${uid}/${Date.now()}`);
+    const response = await uploadString(fileRef, url, "data_url");
+    return await getDownloadURL(response.ref)
+  }catch (error) {
+    console.log(error);
+    throw new Error('Failed to upload file to storage');
+  }
 }
 
 //CREATE
@@ -107,11 +115,10 @@ export const readSweet = async () => {
 //UPDATE
 export const updateSweet = async (sweet, changeData, type) => {
   if (type === 'text') {
-     await updateDoc(doc(db, "sweet", sweet.id), { text:changeData });
+    await updateDoc(doc(db, "sweet", sweet.id), { text:changeData });
   } else if (type === 'img') {
     return deleteFile(changeData).then(()=>updateDoc(doc(db, "sweet", sweet.id), { imgURL:null }))
   }
- 
 }
 
 //DELETE
@@ -125,7 +132,6 @@ export const deleteFile = async (imgURL) => {
   return await deleteObject(urlRef)
 }
 
-
-
-
-
+export const updateName = async (user,newName) => {
+  await updateProfile(user,{displayName:newName})
+}
