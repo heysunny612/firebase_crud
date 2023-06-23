@@ -11,7 +11,7 @@ import {
   updateProfile,
 
 } from 'firebase/auth';
-import { addDoc, collection, getDocs, getFirestore,  doc,  deleteDoc ,  updateDoc, query } from 'firebase/firestore';
+import { addDoc, collection, getDocs, getFirestore,  doc,  deleteDoc ,  updateDoc } from 'firebase/firestore';
 import { getDownloadURL, getStorage, ref, uploadString ,deleteObject} from "firebase/storage";
 
 const firebaseConfig = {
