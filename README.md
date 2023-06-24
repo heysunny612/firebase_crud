@@ -1,70 +1,132 @@
-# Getting Started with Create React App
+# 리액트 프로젝트 파이어베이스를 이용한 스위터 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![ggg](https://github.com/heysunny612/firebase_switter/assets/127499117/de4ca9ab-3fb7-4e82-b61e-f64974a3b6a2)
 
-## Available Scripts
 
-In the project directory, you can run:
+<br/>
 
-### `yarn start`
+## 파이어베이스 Auth를 사용한 계정만들기, 소셜로그인 구현 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+ <br/>
 
-### `yarn test`
+```js
+//api > firebase.js
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+// 중복코드 함수처리
+const handleAuth = async (
+  authFn,
+  { email, password, navigate, setLoginError }
+) => {
+  authFn(auth, email, password)
+    .then(() => navigate('/'))
+    .catch((error) => {
+      console.log(error.code);
+      setLoginError(error.message);
+    });
+};
 
-### `yarn build`
+// 이메일로 계정만들기
+export const createUser = async (params) => {
+  await handleAuth(createUserWithEmailAndPassword, params);
+};
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+//기존 사용자 로그인
+export const login = async (params) => {
+  await handleAuth(signInWithEmailAndPassword, params);
+};
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+//소셜 로그인
+export const loginWithSocial = async (social) => {
+  let provider = null;
+  if (social === 'google') {
+    provider = new GoogleAuthProvider();
+  } else if (social === 'github') {
+    provider = new GithubAuthProvider();
+  } else {
+    throw new Error('Unsupported social provider');  } 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  provider.setCustomParameters({
+    prompt: 'select_account',
+  });
 
-### `yarn eject`
+  return signInWithPopup(auth, provider).catch((error) => {
+    console.log(error);
+  });
+};
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+//로그아웃
+export const logout = () => {
+  return signOut(auth);
+};
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+//로그인한 상태가 변경될때 마다 가져오기
+export const getAuthState = (setUser, setIsGettingUser) => {
+  return onAuthStateChanged(auth, (user) => {
+    user ? setUser(user) : setUser(null);
+    setIsGettingUser(true);
+  });
+};
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+<br/>
+<br/>
 
-## Learn More
+![1](https://github.com/heysunny612/firebase_switter/assets/127499117/3aad5b1e-f566-401a-ad7d-eca8d231e40c)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+<br/>
 
-### Code Splitting
+## 파이어베이스 실시간 데이터를 사용한  CRUD
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```js
+//CREATE
+export const createSweet = async (data) => {
+  const sweetData = { ...data };
+  if (data.imgURL) {
+    sweetData.imgURL = await createFileURL(data.user.id, data.imgURL);
+  }
+  return await addDoc(collection(db, 'sweet'), sweetData);
+};
 
-### Analyzing the Bundle Size
+//READ
+export const readSweet = async () => {
+  const querySnapshot = await getDocs(collection(db, 'sweet'));
+  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+};
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+//UPDATE
+export const updateSweet = async (sweet, changeData, type) => {
+  if (type === 'text') {
+    await updateDoc(doc(db, "sweet", sweet.id), { text:changeData });
+  } else if (type === 'img') {
+    return deleteFile(changeData).then(()=>updateDoc(doc(db, "sweet", sweet.id), { imgURL:null }))
+  }
+}
 
-### Making a Progressive Web App
+//DELETE
+export const deleteSweet = async (id) => {
+  return await deleteDoc(doc(db, "sweet", id))
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
 
-### Advanced Configuration
+<br/>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 파이어베이스 스토리지를 사용한 이미지 업로드
 
-### Deployment
+![2](https://github.com/heysunny612/firebase_switter/assets/127499117/f3ea12f9-7717-4186-b0f7-866e3047adb8)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `yarn build` fails to minify
+<br/>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+| 제목 | 설명 |
+| --- | --- |
+| 구현 사항 |-파이어베이스 어센티케이션을 이용한 구글, 깃허브 로그인 및 이메일로 계정생성 구현 <br/> -파이어베이스 실시간 데이터베이스를 이용한 CRUD 구현 <br/> -파이어베이스 스토리지를 사용한 이미지 업로드 구현 <br/> -리액트 쿼리를 이용한 데이터 상태관리 <br/> -리액트 Hook Form을 사용한 계정만들기, 로그인 구현  |
+| 라이브러리 |firebase, react-query, react-router-dom, react-hook-form, sass, timeago.js|
+| css 및 반응형  | SASS+Post CSS사용 , 반응형 구현  |
+| 배포 주소  | Netlify [[https://sunny-trello.netlify.app/ ](https://zero-shop.netlify.app/)](https://suuny-switter.netlify.app/)|
+| 소스 코드  | Github https://github.com/heysunny612/firebase_switter|
+
+
