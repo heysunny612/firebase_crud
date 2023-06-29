@@ -1,7 +1,8 @@
 # 리액트 프로젝트 파이어베이스를 이용한 스위터 
 
-![ggg](https://github.com/heysunny612/firebase_switter/assets/127499117/de4ca9ab-3fb7-4e82-b61e-f64974a3b6a2)
-
+<p align="center">
+    <img src="https://github.com/heysunny612/firebase_switter/assets/127499117/de4ca9ab-3fb7-4e82-b61e-f64974a3b6a2" alt="ggg">
+</p>
 
 <br/>
 
@@ -73,8 +74,9 @@ export const getAuthState = (setUser, setIsGettingUser) => {
 <br/>
 <br/>
 
-![1](https://github.com/heysunny612/firebase_switter/assets/127499117/3aad5b1e-f566-401a-ad7d-eca8d231e40c)
-
+<p align="center">
+    <img src="https://github.com/heysunny612/firebase_switter/assets/127499117/3aad5b1e-f566-401a-ad7d-eca8d231e40c" alt="1">
+</p>
 
 <br/>
 
@@ -116,8 +118,9 @@ export const deleteSweet = async (id) => {
 
 ## 파이어베이스 스토리지를 사용한 이미지 업로드
 
-![2](https://github.com/heysunny612/firebase_switter/assets/127499117/f3ea12f9-7717-4186-b0f7-866e3047adb8)
-
+<p align="center">
+    <img src="https://github.com/heysunny612/firebase_switter/assets/127499117/f3ea12f9-7717-4186-b0f7-866e3047adb8" alt="2">
+</p>
 
 <br/>
 
